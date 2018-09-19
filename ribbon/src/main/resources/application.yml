@@ -1,0 +1,30 @@
+#spring:
+#  application:
+#    name: ribbon
+#  rabbitmq:
+#    host: localhost
+#    port: 5672
+#    username: guest
+#    password: guest
+#server:
+#  port: 9072
+#management:
+#  endpoints:
+#    web:
+#      exposure:
+#        include: bus-refresh
+#      cors:
+#        allowed-origins: '*'
+#        allowed-methods: '*'
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/
+ribbon:
+  eureka:
+    enabled: false
+#userService: #这是Ribbon要请求的微服务的ServiceId
+#  ribbon:
+#    listOfServers: http://localhost:10001,http://localhost:10002
+server:
+  port: 9999

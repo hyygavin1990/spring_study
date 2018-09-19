@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>cn.datawin</groupId>
+	<artifactId>spring_study</artifactId>
+	<version>master</version>
+	<packaging>pom</packaging>
+
+	<name>spring_study</name>
+	<description>spring学习demo</description>
+
+	<modules>	
+
+		<module>api-gateway</module>
+	
+		<module>api-gateway-1</module>
+
+		<module>api-gateway-top</module>
+		
+		<module>config-server</module>
+		
+		<module>config-server-other</module>
+		
+		<module>eureka-server</module>
+
+		<module>jdbc_config_consumer</module>
+
+		<module>jdbc_config_consumer_other</module>
+
+		<module>kafka</module>
+
+		<module>ribbon</module>
+
+		<module>tomcat-v1</module>
+
+		<module>tomcat-v2</module>
+
+		<module>tomcat-v3</module>
+		
+		<module>webflux</module>
+	</modules>
+
+</project>

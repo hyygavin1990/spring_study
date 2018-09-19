@@ -1,0 +1,29 @@
+spring:
+  application:
+    name: consumer-other
+  cloud:
+    config:
+      uri: http://localhost:9998
+      label: master
+      profile: test2
+    bus:
+      destination: configserverother
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+server:
+  port: 9072
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+      cors:
+        allowed-origins: '*'
+        allowed-methods: '*'
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://localhost:8761/eureka/

@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: mongo-multi
+  data:
+    mongodb:
+       ai:
+          hosts:
+            - 127.0.0.1
+          ports:
+            - 27017
+          username: admin
+          password: 1q2w3e4r
+          database: ai
+          authentication-database: admin
+          connections-per-host: 20
+          min-connections-per-host: 20
+       manager:
+          hosts:
+            - 127.0.0.1
+          ports:
+            - 27017
+          username: admin
+          password: 1q2w3e4r
+          database: manager
+          authentication-database: admin
+          connections-per-host: 20
+          min-connections-per-host: 20

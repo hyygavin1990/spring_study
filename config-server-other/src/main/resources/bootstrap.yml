@@ -1,0 +1,42 @@
+spring:
+  application:
+    name: config-server
+  profiles:
+    active: git,jdbc
+  cloud:
+    config:
+      server:
+        git:
+          uri: http://58.216.156.226:8081/Ai/ConfigCenter_V2.git
+          username: zhoukang
+          password: zhoukang524
+          search-paths: '**/**'
+        jdbc:
+          sql: SELECT `KEY`, `VALUE` from PROPERTIES where APPLICATION=? and PROFILE=? and LABEL=?
+    bus:
+      destination: configserverother
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test1?useUnicode=true&characterEncoding=utf-8
+    username: root
+    password: '`1qazx'
+    platform: mysql
+    separator: ;
+    sql-script-encoding: utf-8
+    continueOnError: false
+server:
+  port: 9998
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: bus-refresh
+      cors:
+        allowed-methods: '*'
+
