@@ -25,7 +25,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Override
     public void addViewControllers(ViewControllerRegistry registry) {
         //将/路径
-        registry.addViewController("/").setViewName("redirect:/kafka/groupInfo");
+        registry.addViewController("/").setViewName("redirect:/kafka/group/info");
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 
