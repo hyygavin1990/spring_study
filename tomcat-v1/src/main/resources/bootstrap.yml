@@ -1,29 +1,6 @@
 spring:
   application:
-    name: gateway
-  cloud:
-    config:
-      uri: http://localhost:9999
-      label: master
-      profile: zuul-url-release
-    bus:
-      destination: configserver
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-server:
-  port: 9072
-management:
-  endpoints:
-    web:
-      exposure:
-        include: bus-refresh
-      cors:
-        allowed-origins: '*'
-        allowed-methods: '*'
-
+    name: syzj-v2-model-server
 #TIME OUT 设置
 hystrix:
   command:
