@@ -1,3 +1,5 @@
+server:
+  port: 9000
 spring:
   application:
     name: syzj-v2-model-server
