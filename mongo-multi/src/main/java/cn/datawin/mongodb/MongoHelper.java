@@ -1,6 +1,9 @@
 package cn.datawin.mongodb;
 
+import cn.datawin.bean.User;
 import cn.datawin.util.DateFormat;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.UpdateResult;
@@ -10,86 +13,184 @@ import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.util.Assert;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.beans.BeanInfo;
+import java.beans.IntrospectionException;
+import java.beans.Introspector;
+import java.beans.PropertyDescriptor;
+import java.lang.reflect.Method;
+import java.util.*;
 
 /**
+ * 假设配置中的数据库为myDB
+ * 1、myDB::col                  本库中的表 (JPA中MongoRepository调用)
+ * 2、myDB::col_yyyyMM           本库中的月表
+ * 3、myDB::col_yyyyMMdd         本库中的日表
+ * 4、myDB::col+suffix           本库中的自定义后缀表
+ * 5、myDB_yyyyMM::col           月库中的表
+ * 6、myDB_yyyyMM::col_yyyyMMdd  月库中日表
+ * 7、myDB_yyyyMMdd::col         日库中的表
+ * 7、dbName::col                自定义库中的表
  * Created by zhouyi on 2018/6/25.
  */
 public class MongoHelper extends MongoTemplate {
 
-    private MonthlyMongoDbFactory monthlyMongoDbFactory;
+    private MyMongoDbFactory myMongoDbFactory;
 
     public MongoHelper(MongoDbFactory mongoDbFactory) {
         super(mongoDbFactory);
-        monthlyMongoDbFactory = new MonthlyMongoDbFactory(mongoDbFactory);
+        myMongoDbFactory = new MyMongoDbFactory(mongoDbFactory);
     }
 
-    public MongoCollection getCollection(String collectionName){
-        return monthlyMongoDbFactory.getDb().getCollection(collectionName);
-    }
-
-    public MongoCollection getCollection(String dbName, String collectionName){
-        return monthlyMongoDbFactory.getDb(dbName).getCollection(collectionName);
-    }
-
-    public MongoCollection getCollection(Date date, String collectionName){
-        String month = DateFormat.dateFormat(date, "yyyyMM");
-        return monthlyMongoDbFactory.getDbByMonth(month).getCollection(collectionName);
-    }
-
-    public MongoCollection getCollectionByMonth(String month, String collectionName){
-        return monthlyMongoDbFactory.getDbByMonth(month).getCollection(collectionName);
-    }
-
-    public MongoCollection getCollectionByDay(String day, Class<?> entityClass){
-        String month = null;
-        try {
-             month = DateFormat.dateFormat(DateFormat.dateFormat(day, "yyyy-MM-dd"), "yyyyMM");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return monthlyMongoDbFactory.getDbByMonth(month).getCollection(getCollectionName(entityClass));
-    }
-
+    //=======================================myDB=======================================
+    /**
+     * 获取myDB库中的entityClass类反射的集合
+     * @param entityClass
+     * @return myDB::reflect(entityClass)
+     */
     public MongoCollection getCollection(Class<?> entityClass){
-        return monthlyMongoDbFactory.getDb().getCollection(getCollectionName(entityClass));
+        return myMongoDbFactory.getDb().getCollection(getCollectionName(entityClass));
     }
 
+    /**
+     * 获取myDB_yyyyMM库中的collectionName集合
+     * @param date
+     * @param collectionName
+     * @return myDB_yyyyMM::collectionName
+     */
+    public MongoCollection getCollectionInMonthDb(Date date, String collectionName){
+        String monthStr = DateFormat.dateFormat(date, "yyyyMM");
+        return myMongoDbFactory.getDbWithSuffix(monthStr).getCollection(collectionName);
+    }
+
+    /**
+     * 获取myDB_yyyyMM库中的entityClass类反射的集合
+     * @param date
+     * @param entityClass
+     * @return myDB_yyyyMM::reflect(entityClass)
+     */
+    public MongoCollection getCollectionInMonthDb(Date date, Class<?> entityClass){
+        return getCollectionInMonthDb(date,getCollectionName(entityClass));
+    }
+
+    /**
+     * 获取myDB_yyyyMMdd库中的collectionName集合
+     * @param date
+     * @param collectionName
+     * @return myDB_yyyyMMdd::collectionName
+     */
+    public MongoCollection getCollectionInDateDb(Date date, String collectionName){
+        String dateStr = DateFormat.dateFormat(date, "yyyyMMdd");
+        return myMongoDbFactory.getDbWithSuffix(dateStr).getCollection(collectionName);
+    }
+
+    /**
+     * 获取myDB_yyyyMMdd库中的entityClass类反射的集合
+     * @param date
+     * @param entityClass
+     * @return myDB_yyyyMMdd::reflect(entityClass)
+     */
+    public MongoCollection getCollectionInDateDb(Date date, Class<?> entityClass){
+        return getCollectionInDateDb(date,getCollectionName(entityClass));
+    }
+
+    /**
+     * 获取myDB_suffix库中的collectionName集合
+     * @param suffix
+     * @param collectionName
+     * @return myDB_month::collectionName
+     */
+    public MongoCollection getCollectionInSuffixDb(String suffix, String collectionName){
+        Assert.hasText(suffix, "suffix must not be empty.");
+        return myMongoDbFactory.getDbWithSuffix(suffix).getCollection(collectionName);
+    }
+
+    /**
+     * 获取myDB_suffix库中的entityClass类反射的集合
+     * @param suffix
+     * @param entityClass
+     * @return myDB_suffix::reflect(entityClass)
+     */
+    public MongoCollection getCollectionInSuffixDb(String suffix, Class<?> entityClass){
+        return getCollectionInSuffixDb(suffix,getCollectionName(entityClass));
+    }
+
+    /**
+     * 获取在myDB_yyyyMM库中的collectionName_yyyyMMdd
+     * @param date
+     * @param collectionName
+     * @return myDB_yyyyMM::collectionName_yyyyMMdd
+     */
+    public MongoCollection getDateCollectionInMonthDb(Date date, String collectionName){
+        String dateStr = DateFormat.dateFormat(date,"yyyyMMdd");
+        collectionName = collectionName + "_" + dateStr;
+        String monthStr = DateFormat.dateFormat(date,"yyyyMM");
+        return myMongoDbFactory.getDbWithSuffix(monthStr).getCollection(collectionName);
+    }
+
+    /**
+     * 获取在myDB_yyyyMM库中的reflect(entityClass)_yyyyMMdd
+     * @param date
+     * @param entityClass
+     * @return myDB_yyyyMM::reflect(entityClass)_yyyyMMdd
+     */
+    public MongoCollection getDateCollectionInMonthDb(Date date, Class<?> entityClass){
+        String collectionName = getCollectionName(entityClass);
+        return getDateCollectionInMonthDb(date,collectionName);
+    }
+
+
+    //=======================================dbName=======================================
+    /**
+     * 获取dbName库中的collectionName集合
+     * @param dbName
+     * @param collectionName
+     * @return dbName::collectionName
+     */
+    public MongoCollection getCollection(String dbName, String collectionName){
+        Assert.hasText(dbName, "dbName must not be empty.");
+        Assert.hasText(collectionName, "collectionName must not be empty.");
+        return myMongoDbFactory.getDb(dbName).getCollection(collectionName);
+    }
+
+    /**
+     * 获取dbName库中的entityClass类反射的集合
+     * @param dbName
+     * @param entityClass
+     * @return dbName::reflect(entityClass)
+     */
     public MongoCollection getCollection(String dbName, Class<?> entityClass){
-        return monthlyMongoDbFactory.getDb(dbName).getCollection(getCollectionName(entityClass));
+        return getCollection(dbName,getCollectionName(entityClass));
     }
 
-    public MongoCollection getCollection(Date date, Class<?> entityClass){
-        String month = DateFormat.dateFormat(date, "yyyyMM");
-        return monthlyMongoDbFactory.getDbByMonth(month).getCollection(getCollectionName(entityClass));
-    }
+    //=========================操作=========================
 
-    public MongoCollection getCollectionByMonth(String month, Class<?> entityClass){
-        return monthlyMongoDbFactory.getDbByMonth(month).getCollection(getCollectionName(entityClass));
-    }
-
-    public void insert(Date date, Object objectToSave) {
-        MonthSelector.set(date);
+    public void insert(Object objectToSave) {
         super.insert(objectToSave);
     }
 
-    public void insertAll(Date date, Collection<? extends Object> objectsToSave) {
-        MonthSelector.set(date);
+    public void insertAll(Collection<? extends Object> objectsToSave) {
         super.insertAll(objectsToSave);
     }
 
-    public UpdateResult updateFirst(Date date, Query query, Update update, Class<?> entityClass) {
-        MonthSelector.set(date);
+    public void insert(Object objectToSave,MongoCollection collection) {
+        collection.insertOne(obj2Document(objectToSave));
+    }
+
+    public void insertAll(Collection<? extends Object> objectsToSave,MongoCollection collection) {
+        List<Document> documentList = new ArrayList<>();
+        for (Object o : objectsToSave) {
+            documentList.add(obj2Document(o));
+        }
+        collection.insertMany(documentList);
+    }
+
+    public UpdateResult updateFirst( Query query, Update update, Class<?> entityClass) {
         return super.updateFirst(query, update, entityClass);
     }
 
-    public UpdateResult updateMulti(Date date, Query query, Update update, Class<?> entityClass) {
-        MonthSelector.set(date);
+    public UpdateResult updateMulti( Query query, Update update, Class<?> entityClass) {
         return super.updateMulti(query, update, entityClass);
     }
 
@@ -347,5 +448,48 @@ public class MongoHelper extends MongoTemplate {
         return (List<Document>) findIterable.into(list);
     }
 
+
+    private Document obj2Document(Object object){
+        Document document = new Document();
+        document.putAll(beanToMap(object));
+        return document;
+    }
+
+    public static JSONObject beanToMap(Object bean){
+        BeanInfo info =null;
+        JSONObject map = new JSONObject();
+        Class<?> _class = bean.getClass();
+        try {
+            info = Introspector.getBeanInfo(_class);
+        } catch (IntrospectionException e) {
+            e.printStackTrace();
+        }
+        PropertyDescriptor[] pros = info.getPropertyDescriptors();
+        for (PropertyDescriptor pro : pros) {
+            String name = pro.getName();
+            if (!"class".equals(name)) {
+                Method method = pro.getReadMethod();
+                try {
+                    Object result = method.invoke(bean);
+                    if (result != null) {
+                        map.put(name, result);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return map;
+    }
+    public static void main(String[] args) throws  Exception {
+        User user = new User();
+        user.setName("Tom");
+        user.setGender("male");
+        user.setInittime(new Date());
+        beanToMap(user);
+
+//        Document document = new Document();
+//        document.putAll(map);
+    }
 
 }

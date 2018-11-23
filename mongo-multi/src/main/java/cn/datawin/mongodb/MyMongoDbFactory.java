@@ -11,16 +11,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 /**
- * 继承 {@link SimpleMongoDbFactory }，重写{@code getDB}方法，添加月库
- *
  * @author fonlin
  * @date 2018/6/28
  */
-public class MonthlyMongoDbFactory  {
-
+public class MyMongoDbFactory {
 
     private MongoDbFactory mongoDbFactory;
-    private static final String MONTH_PATTERN = "yyyyMM";
 
     /**
      * 没有分月库的数据库
@@ -28,7 +24,7 @@ public class MonthlyMongoDbFactory  {
     private String databaseName;
 
 
-    public MonthlyMongoDbFactory(MongoDbFactory mongoDbFactory) {
+    public MyMongoDbFactory(MongoDbFactory mongoDbFactory) {
         this.mongoDbFactory = mongoDbFactory;
         this.databaseName = mongoDbFactory.getDb().getName();
     }
@@ -38,19 +34,15 @@ public class MonthlyMongoDbFactory  {
     }
 
     public MongoDatabase getDb() throws DataAccessException {
-        //获取当前ThreadLocal中的month
-        String month = MonthSelector.getAndRemove();
-        //如果没有，则设置当前月
-        if (StringUtil.isEmpty(month)) {
-            month = LocalDateTime.now().format(DateTimeFormatter.ofPattern(MONTH_PATTERN));
-        }
-        return getDbByMonth(month);
+        return getDb(databaseName);
     }
 
-    public MongoDatabase getDbByMonth(String month) throws DataAccessException {
-        Assert.hasText(month, "month must not be empty.");
-        String name = this.databaseName + "_" + month;
+    public MongoDatabase getDbWithSuffix(String suffix) throws DataAccessException {
+        Assert.hasText(suffix, "month must not be empty.");
+        String name = this.databaseName + "_" + suffix;
         return mongoDbFactory.getDb(name);
     }
+
+
 
 }
