@@ -6,6 +6,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.result.UpdateResult;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -312,6 +313,24 @@ public class MongoHelper extends MongoTemplate {
         }
         List<Document> list = new ArrayList<>();
         return (List<Document>) collection.find(query).sort(sort).into(list);
+    }
+
+
+    /**
+     * 查询列表
+     * @param query 查询条件
+     * @param sort 排序
+     */
+    public List<Document> findList(MongoCollection collection, Document query, Document sort,int limit) {
+        if (query == null) {
+            query = new Document();
+        }
+        List<Document> list = new ArrayList<>();
+        MongoCursor<Document> iter = collection.find(query).sort(sort).limit(limit).iterator();
+        while (iter.hasNext()){
+            list.add(iter.next());
+        }
+        return list;
     }
 
     /**

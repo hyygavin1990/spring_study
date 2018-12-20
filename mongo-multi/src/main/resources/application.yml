@@ -5,23 +5,12 @@ spring:
     mongodb:
        ai:
           hosts:
-            - 127.0.0.1
+            - 61.160.248.132
           ports:
-            - 27017
+            - 50000
           username: admin
-          password: 1q2w3e4r
-          database: ai
-          authentication-database: admin
-          connections-per-host: 20
-          min-connections-per-host: 20
-       manager:
-          hosts:
-            - 127.0.0.1
-          ports:
-            - 27017
-          username: admin
-          password: 1q2w3e4r
-          database: manager
+          password: '9ol*IK&UJ6yh'
+          database: cloud_call
           authentication-database: admin
           connections-per-host: 20
           min-connections-per-host: 20
