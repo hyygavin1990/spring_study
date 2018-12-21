@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: trace-2
+server:
+  port: 9102
+
+eureka:
+  instance:
+    preferIpAddress: true
+    lease-expiration-duration-in-seconds: 15
+#服务刷新时间配置，每隔这个时间会主动心跳一次
+#默认30s
+    lease-renewal-interval-in-seconds: 5
+#eureka client刷新本地缓存时间
+#默认30s
+  client:
+    registryFetchIntervalSeconds: 5
+#最好每个实例不同顺序，按照离自己最近的Eureka地址放到最前面
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+# log trace detail
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          servlet:
+            DispatcherServlet: DEBUG
