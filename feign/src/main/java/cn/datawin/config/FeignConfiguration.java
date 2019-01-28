@@ -1,0 +1,16 @@
+package cn.datawin.config;
+
+import feign.Contract;
+import org.springframework.context.annotation.Bean;
+
+/**
+ * Created by hyygavin on 2019/1/28.
+ */
+public class FeignConfiguration {
+
+    @Bean
+    public Contract feignContract(){
+
+        return new feign.Contract.Default();
+    }
+}
