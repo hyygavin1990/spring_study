@@ -46,7 +46,8 @@ public class RedisService {
      * @return
      */
     public String get(String key){
-        return redisTemplate.opsForValue().get(key).toString();
+        Object obj = redisTemplate.opsForValue().get(key);
+        return obj==null?"":obj.toString();
     }
 
     /**

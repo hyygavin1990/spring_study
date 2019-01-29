@@ -25,6 +25,9 @@ public class RedisApplication {
 	public String inc(HttpServletRequest request) {
 		return redisService.inc("test",1)+"";
 	}
-
+	@RequestMapping(value = "/get", method = RequestMethod.GET)
+	public Object get(HttpServletRequest request) {
+		return redisService.get("test");
+	}
 }
 
