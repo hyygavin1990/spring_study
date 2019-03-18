@@ -1,6 +1,6 @@
 spring:
   kafka:
-    bootstrap-servers: 61.160.248.94:9092
+    bootstrap-servers: 61.160.237.79:9092
     consumer:
       auto-commit-interval: 100
       auto-offset-reset: earliest
