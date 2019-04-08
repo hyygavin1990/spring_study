@@ -12,6 +12,6 @@ import org.springframework.cloud.openfeign.FeignClient;
 @FeignClient(name="user-service",configuration = FeignConfiguration.class)
 public interface UserFeignClient {
 
-    @RequestLine("GET /{id}")
+    @RequestLine("GET /user/{id}")
     public User findById(@Param("id") Integer id);
 }
