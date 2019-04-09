@@ -18,26 +18,27 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Created by hyygavin on 2019/1/29.
  */
-@Import(FeignConfiguration.class)
+//@Import(FeignConfiguration.class)
 @RestController
 public class MovieController {
-    UserFeignClient userUserFeignClient;
-    UserFeignClient adminUserFeignClient;
-
     @Autowired
+    UserFeignClient userUserFeignClient;
+//    UserFeignClient adminUserFeignClient;
+
+   /* @Autowired
     public MovieController(Decoder decoder, Encoder encoder, Client client, Contract contract){
         this.userUserFeignClient = Feign.builder().client(client).encoder(encoder).decoder(decoder).contract(contract)
                 .requestInterceptor(new BasicAuthRequestInterceptor("user","123")).target(UserFeignClient.class,"http://feign-user-service/");
         this.adminUserFeignClient = Feign.builder().client(client).encoder(encoder).decoder(decoder).contract(contract)
                 .requestInterceptor(new BasicAuthRequestInterceptor("admin","123456")).target(UserFeignClient.class,"http://feign-user-service/");
-    }
+    }*/
 
     @RequestMapping("/user-user/{id}")
     public User findByIdUser(@PathVariable("id") Integer id){
         return userUserFeignClient.findById(id);
     }
-    @RequestMapping("/admin-user/{id}")
-    public User findByIdAdmin(@PathVariable("id") Integer id){
-        return adminUserFeignClient.findById(id);
-    }
+//    @RequestMapping("/admin-user/{id}")
+//    public User findByIdAdmin(@PathVariable("id") Integer id){
+//        return adminUserFeignClient.findById(id);
+//    }
 }
