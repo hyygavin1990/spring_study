@@ -1,6 +1,6 @@
 spring:
   kafka:
-    bootstrap-servers: 61.160.237.79:9092
+    bootstrap-servers: 61.160.237.94:9091,61.160.237.94:9092,61.160.237.94:9093
     consumer:
       auto-commit-interval: 100
       auto-offset-reset: earliest
@@ -16,4 +16,4 @@ spring:
       retries: 0
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
 server:
-  port: 10010
+  port: 20000

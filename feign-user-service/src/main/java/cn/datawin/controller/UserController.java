@@ -2,6 +2,7 @@ package cn.datawin.controller;
 
 import cn.datawin.bean.User;
 import cn.datawin.client.UserService;
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +24,7 @@ public class UserController {
     @Resource
     UserService userService;
 
-    @RequestMapping("/{id}")
+    @RequestMapping("/user/{id}")
     public User findById(@PathVariable("id") Integer id){
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         if(principal instanceof UserDetails){
@@ -34,5 +35,19 @@ public class UserController {
             }
         }
         return userService.findById(id);
+    }
+    @RequestMapping("/hi")
+    public String hi(String name){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if(principal instanceof UserDetails){
+            UserDetails user = (UserDetails) principal;
+            Collection<? extends GrantedAuthority> collection = user.getAuthorities();
+            for (GrantedAuthority c : collection) {
+                logger.info("当前的用户是{},角色是{}",user.getUsername(),c.getAuthority());
+            }
+        }
+        JSONObject json = new JSONObject();
+        json.put("name",name);
+        return json.toJSONString();
     }
 }

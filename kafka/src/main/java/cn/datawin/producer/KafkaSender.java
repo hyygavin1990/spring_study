@@ -16,13 +16,18 @@ public class KafkaSender {
     private KafkaTemplate<String, String> kafkaTemplate;
 
     //发送消息方法
-    public void send() {
+    public void send(String topic) {
         Message message = new Message();
         message.setId(System.currentTimeMillis());
         message.setMsg(UUID.randomUUID().toString());
         message.setSendTime(new Date());
         String json  =JSON.toJSONString(message);
         System.out.println("+++++++++++++++++++++  message ="+json);
-        kafkaTemplate.send("zhisheng",json);
+        kafkaTemplate.send(topic,json);
+    }
+
+    //发送消息方法
+    public void send() {
+        send("test");
     }
 }

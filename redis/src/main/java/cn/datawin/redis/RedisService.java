@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 public class RedisService {
     Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
-    private RedisTemplate redisTemplate;
+    private StringRedisTemplate redisTemplate;
 
     /**
      * redis set
