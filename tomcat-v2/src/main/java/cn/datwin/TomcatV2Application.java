@@ -1,6 +1,7 @@
 package cn.datwin;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
@@ -26,6 +27,18 @@ public class TomcatV2Application {
 	@PostMapping("/user")
 	public String user(@RequestBody User user){
 		return "tomcat-v2-user:"+user.getId()+","+user.getName();
+	}
+
+	@Value("${redis}")
+	private String redis;
+	@Value("${db}")
+	private String db;
+	@Value("${rule}")
+	private String rule;
+
+	@RequestMapping("/test")
+	public String test(){
+		return redis+"=="+db+"=="+rule;
 	}
 
 }
