@@ -40,6 +40,8 @@
 		<module>tomcat-v3</module>
 		
 		<module>webflux</module>
-	</modules>
+		<module>webtest</module>
+        <module>freemarker</module>
+    </modules>
 
 </project>

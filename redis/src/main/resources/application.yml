@@ -8,8 +8,10 @@ spring:
   redis:
     #数据库索引
     database: 0
-    host: localhost
-    password: '`1qazx'
+    host: r-uf6uu1fogaai15b6ga.redis.rds.aliyuncs.com
+#    cluster:
+#      nodes: 61.160.237.77:7001,61.160.237.76:7001,61.160.237.71:7001
+    password: '9ol*IK&UJ6yh'
     lettuce: # NOT JEDIS
       pool:
         max-active: 8
@@ -17,5 +19,6 @@ spring:
         min-idle: 0
     #连接超时时间
     timeout: 10000
+    port: 6379
 server:
   port: 20003

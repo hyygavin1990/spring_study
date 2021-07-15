@@ -1,11 +1,12 @@
 spring:
   kafka:
-    bootstrap-servers: 61.160.237.94:9091,61.160.237.94:9092,61.160.237.94:9093
+#    bootstrap-servers: 61.160.237.94:9091,61.160.237.94:9092,61.160.237.94:9093
+    bootstrap-servers: 61.160.237.132:9092
     consumer:
       auto-commit-interval: 100
       auto-offset-reset: earliest
       enable-auto-commit: true
-      group-id: log-consumer-group-1
+      group-id: audio-consumer-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       max-poll-records: 1
